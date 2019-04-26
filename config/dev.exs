@@ -53,4 +53,5 @@ config :conduit, Conduit.Repo,
   password: "",
   database: "conduit_dev",
   hostname: "localhost",
-  pool_size: 10
+  pool_size: 10,
+  charset: "utf8mb4"

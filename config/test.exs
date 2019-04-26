@@ -15,4 +15,5 @@ config :conduit, Conduit.Repo,
   password: "",
   database: "conduit_test",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  charset: "utf8mb4"

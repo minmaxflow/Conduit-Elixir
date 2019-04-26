@@ -10,6 +10,10 @@ use Mix.Config
 config :conduit,
   ecto_repos: [Conduit.Repo]
 
+# config migration
+config :conduit, Conduit.Repo,
+  migration_timestamps: [type: :utc_datetime, inserted_at: :created_at]
+
 # Configures the endpoint
 config :conduit, ConduitWeb.Endpoint,
   url: [host: "localhost"],
