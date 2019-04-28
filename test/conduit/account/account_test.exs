@@ -16,12 +16,13 @@ defmodule Conduit.AccountTest do
   end
 
   test "create_user/1 create invalid user" do
-    assert {:error, %Changeset{} = _} = Account.create_user(@invalid_atts)
+    assert {:error, %Changeset{}} = Account.create_user(@invalid_atts)
   end
 
   test "create_user/1 check unique constraint" do
     Account.create_user(@valid_attr)
 
-    assert {:error, %Changeset{} = _} = Account.create_user(@valid_attr)
+    assert {:error, %Changeset{} = changeset} = Account.create_user(@valid_attr)
+    assert %{email: ["has already been taken"]} = errors_on(changeset)
   end
 end
