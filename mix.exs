@@ -40,7 +40,11 @@ defmodule Conduit.MixProject do
       {:mariaex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+
+      # auth
+      {:comeonin, "~> 4.0.3"},
+      {:bcrypt_elixir, "~> 1.0.4"}
     ]
   end
 
