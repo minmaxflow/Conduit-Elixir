@@ -7,7 +7,7 @@ defmodule Conduit.AccountTest do
   alias Conduit.Account.{User}
 
   @valid_attr %{email: "test@test.com", username: "username", password: "password123"}
-  @invalid_atts %{}
+  @invalid_atts %{email: "test@test.com", username: "abcd"}
 
   test "create_user/1 create valid user" do
     assert {:ok, %User{} = user} = Account.create_user(@valid_attr)
@@ -17,6 +17,12 @@ defmodule Conduit.AccountTest do
 
   test "create_user/1 create invalid user" do
     assert {:error, %Changeset{}} = Account.create_user(@invalid_atts)
+  end
+
+  test "create_user/1 create invalid user(2)" do
+    attrs = %{@invalid_atts | username: "ab"}
+    assert {:error, %Changeset{} = changset} = Account.create_user(attrs)
+    assert %{username: _, password: _} = errors_on(changset)
   end
 
   test "create_user/1 check unique constraint" do

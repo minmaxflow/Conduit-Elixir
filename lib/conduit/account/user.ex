@@ -19,10 +19,10 @@ defmodule Conduit.Account.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:email, :password, :username, :bio, :image])
-    |> encrpyt_password()
-    |> validate_required([:email, :password_hash, :username])
+    |> validate_required([:email, :password, :username])
     |> validate_format(:email, ~r/@/)
     |> validate_length(:username, min: 3, max: 100)
+    |> encrpyt_password()
     |> unique_constraint(:email)
     |> unique_constraint(:username)
   end
