@@ -1,6 +1,14 @@
 defmodule ConduitWeb.ErrorView do
   use ConduitWeb, :view
 
+  def render("422.json", %{errors: errors}) do
+    %{errors: errors}
+  end
+
+  def render("401.json", _assigns) do
+    %{errors: %{details: "unauthorized request"}}
+  end
+
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.
   # def render("500.json", _assigns) do

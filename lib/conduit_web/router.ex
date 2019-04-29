@@ -7,5 +7,13 @@ defmodule ConduitWeb.Router do
 
   scope "/api", ConduitWeb do
     pipe_through :api
+
+    # user
+    post "/users", UserController, :register
+
+    # profile
+    get "/profiles/:username", ProfileController, :profile
+    post "/profile/:username/follow", ProfileController, :follow
+    delete "/profile/:username/follow", ProfileController, :unfollow
   end
 end
