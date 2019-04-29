@@ -3,6 +3,7 @@ defmodule ConduitWeb.UserController do
 
   alias Conduit.Account
 
+  # 这个可以放到 ConduitWeb里面，暂时不动
   action_fallback ConduitWeb.FallbackController
 
   def create(conn, %{"user" => user_params}) do

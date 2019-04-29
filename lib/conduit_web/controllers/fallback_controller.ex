@@ -5,7 +5,9 @@ defmodule ConduitWeb.FallbackController do
   alias ConduitWeb.ErrorView
   alias Ecto.Changeset
 
-  def call(conn, {:error, %Changeset{} = changset}) do
+  def init(opts), do: opts
+
+  def call(conn, %Changeset{} = changset) do
     conn
     |> put_status(422)
     |> put_view(ErrorView)
@@ -22,7 +24,7 @@ defmodule ConduitWeb.FallbackController do
   defp errors(changset) do
     Changeset.traverse_errors(changset, fn {msg, opts} ->
       Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "${#{key}}", to_string(value))
+        String.replace(acc, "%{#{key}}", to_string(value))
       end)
     end)
   end
