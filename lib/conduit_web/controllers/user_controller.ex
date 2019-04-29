@@ -24,8 +24,13 @@ defmodule ConduitWeb.UserController do
     end
   end
 
-  defp current(conn, _params) do
-    user = Guardian.Plug.current_resource(conn)
-    conn |> render(conn, "user.json", user: user)
+  def current(conn, _params) do
+    with user <- Guardian.Plug.current_resource(conn),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
+      user = %{user | token: token}
+      render(conn, "user.json", user: user)
+    else
+      _ -> {:error, :unauthorized}
+    end
   end
 end

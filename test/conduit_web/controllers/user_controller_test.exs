@@ -83,13 +83,36 @@ defmodule ConduitWeb.UserControllerTest do
     test "direct access with auth return error", %{conn: conn} do
       response =
         conn
-        |> get("/api/user")
+        |> get(Routes.user_path(conn, :current))
         |> json_response(401)
 
       assert response == %{"errors" => %{"details" => "unauthorized request"}}
     end
+
+    test "login then access ", %{conn: conn} do
+      conn = auth_conn(conn)
+
+      response =
+        conn
+        |> get(Routes.user_path(conn, :current))
+        |> json_response(200)
+
+      assert %{"user" => %{"token" => token, "email" => "test@test.com"}} = response
+    end
   end
 
-  test "login then access ", %{conn: conn} do
+  defp auth_conn(conn) do
+    Account.create_user(@valid_attr)
+
+    response =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(Routes.user_path(conn, :login), Jason.encode!(%{"user" => @valid_attr}))
+      |> json_response(200)
+
+    assert %{"user" => %{"token" => token}} = response
+
+    conn
+    |> put_req_header("authorization", "Bearer " <> token)
   end
 end
