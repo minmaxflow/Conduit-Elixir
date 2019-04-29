@@ -14,6 +14,10 @@ config :conduit,
 config :conduit, Conduit.Repo,
   migration_timestamps: [type: :utc_datetime, inserted_at: :created_at]
 
+config :conduit, ConduitWeb.Guardian,
+  issuer: "conduit",
+  secret_key: "les4jsIJ5iYkbct35VAk9jWSUyewfmMV9nNEhpYvVF3ZaRjGOO9SzlOfB3A3tltf"
+
 # Configures the endpoint
 config :conduit, ConduitWeb.Endpoint,
   url: [host: "localhost"],

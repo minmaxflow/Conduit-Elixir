@@ -7,7 +7,7 @@ defmodule ConduitWeb.FallbackController do
 
   def init(opts), do: opts
 
-  def call(conn, %Changeset{} = changset) do
+  def call(conn, {:error, %Changeset{} = changset}) do
     conn
     |> put_status(422)
     |> put_view(ErrorView)
@@ -19,6 +19,14 @@ defmodule ConduitWeb.FallbackController do
     |> put_status(401)
     |> put_view(ErrorView)
     |> render("401.json")
+  end
+
+  # default
+  def call(conn, _opts) do
+    conn
+    |> put_status(404)
+    |> put_view(ErrorView)
+    |> render("404.json")
   end
 
   defp errors(changset) do

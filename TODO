@@ -1,8 +1,8 @@
-1 return a jwt token for auth
-    https://hexdocs.pm/guardian/introduction-overview.html#content   
-2 login 
-    comeonin // check password  & dumpy check 
+make auth to work
+
 3 current user 
+
+==
 4 user follow
     table
     schema
