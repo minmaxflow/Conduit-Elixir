@@ -2,5 +2,5 @@ alias Conduit.Repo
 alias Conduit.Account
 alias Conduit.Account.User
 
-import Ecto.Query, warn: false
-import Ecto.Changeset, warn: false
+import_if_available(Ecto.Query, warn: false)
+import_if_available(Ecto.Changeset, warn: false)

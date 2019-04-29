@@ -1,9 +1,8 @@
-1 test json api 
-2 return a jwt token for auth
+1 return a jwt token for auth
     https://hexdocs.pm/guardian/introduction-overview.html#content   
-3 login 
+2 login 
     comeonin // check password  & dumpy check 
-4 current user 
-5 user follow
+3 current user 
+4 user follow
     table
     schema

@@ -9,7 +9,7 @@ defmodule ConduitWeb.Router do
     pipe_through :api
 
     # user
-    post "/users", UserController, :register
+    post "/users", UserController, :create
 
     # profile
     get "/profiles/:username", ProfileController, :profile
