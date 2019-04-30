@@ -5,12 +5,16 @@ defmodule ConduitWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :opt_auth do
+    plug ConduitWeb.AuthOptPipeLine
+  end
+
   pipeline :auth do
     plug ConduitWeb.AuthPipeLine
   end
 
   scope "/api", ConduitWeb do
-    pipe_through :api
+    pipe_through [:api, :opt_auth]
 
     # user register/login
     post "/users", UserController, :create

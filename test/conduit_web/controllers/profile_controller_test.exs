@@ -73,9 +73,43 @@ defmodule ConduitWeb.ProfileControllerTest do
 
   describe "profile" do
     test "with login", %{conn: conn} do
+      {:ok, user1} = Account.create_user(@user1_attr)
+      {:ok, user2} = Account.create_user(@user2_attr)
+
+      Account.follow_user(user1, user2.username)
+
+      # 这个路由比较特殊，不要求auth，但是要求能访问到，暂时是失败的
+      response =
+        conn
+        |> auth_conn(@user1_attr)
+        |> get(Routes.profile_path(conn, :profile, user2.username))
+        |> json_response(200)
+
+      assert %{
+               "profile" => %{
+                 "following" => true,
+                 "username" => "usr2"
+               }
+             } = response
     end
 
     test "without login", %{conn: conn} do
+      {:ok, user1} = Account.create_user(@user1_attr)
+      {:ok, user2} = Account.create_user(@user2_attr)
+
+      Account.follow_user(user1, user2.username)
+
+      response =
+        conn
+        |> get(Routes.profile_path(conn, :profile, user2.username))
+        |> json_response(200)
+
+      assert %{
+               "profile" => %{
+                 "following" => false,
+                 "username" => "usr2"
+               }
+             } = response
     end
   end
 
