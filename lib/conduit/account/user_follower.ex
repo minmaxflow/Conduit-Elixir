@@ -17,5 +17,6 @@ defmodule Conduit.Account.UserFollower do
     user_follower
     |> cast(attrs, [:follower_id, :followee_id])
     |> validate_required([:follower_id, :followee_id])
+    |> unique_constraint(:follower_id, name: :PRIMARY)
   end
 end

@@ -101,13 +101,16 @@ defmodule ConduitWeb.UserControllerTest do
     end
   end
 
-  defp auth_conn(conn) do
-    Account.create_user(@valid_attr)
+  defp auth_conn(conn, attrs \\ %{}) do
+    attrs =
+      Map.merge(%{email: "test@test.com", username: "username", password: "password123"}, attrs)
+
+    Account.create_user(attrs)
 
     response =
       conn
       |> put_req_header("content-type", "application/json")
-      |> post(Routes.user_path(conn, :login), Jason.encode!(%{"user" => @valid_attr}))
+      |> post(Routes.user_path(conn, :login), Jason.encode!(%{"user" => attrs}))
       |> json_response(200)
 
     assert %{"user" => %{"token" => token}} = response
