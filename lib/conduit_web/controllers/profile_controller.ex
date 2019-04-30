@@ -6,8 +6,6 @@ defmodule ConduitWeb.ProfileController do
   def profile(conn, %{"username" => followee_username}) do
     user = Guardian.Plug.current_resource(conn)
 
-    IO.inspect(user, label: "profile")
-
     with user_profile when not is_nil(user_profile) <- Account.profile(user, followee_username) do
       render(conn, "profile.json", %{profile: user_profile})
     else

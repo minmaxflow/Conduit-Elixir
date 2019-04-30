@@ -4,5 +4,6 @@ defmodule ConduitWeb.AuthOptPipeLine do
     module: ConduitWeb.Guardian,
     error_handler: ConduitWeb.AuthErrorHandler
 
+  plug Guardian.Plug.VerifyHeader, realm: "Bearer"
   plug Guardian.Plug.LoadResource, allow_blank: true
 end

@@ -78,7 +78,6 @@ defmodule ConduitWeb.ProfileControllerTest do
 
       Account.follow_user(user1, user2.username)
 
-      # 这个路由比较特殊，不要求auth，但是要求能访问到，暂时是失败的
       response =
         conn
         |> auth_conn(@user1_attr)
