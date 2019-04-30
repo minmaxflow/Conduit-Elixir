@@ -56,8 +56,8 @@ defmodule Conduit.AccountTest do
       assert {:ok, user1} = Account.create_user(user1)
       assert {:ok, user2} = Account.create_user(user2)
 
-      assert {:ok, _} = Account.follow_user(user1, user2.username)
-      assert {:ok, _} = Account.follow_user(user2, user1.username)
+      assert {:ok, %{following: true}} = Account.follow_user(user1, user2.username)
+      assert {:ok, %{following: true}} = Account.follow_user(user2, user1.username)
     end
 
     test "unfollow" do
@@ -73,8 +73,8 @@ defmodule Conduit.AccountTest do
       Account.follow_user(user1, user2.username)
       Account.follow_user(user2, user1.username)
 
-      assert {:ok, _} = Account.unfollow_user(user1, user2.username)
-      assert {:ok, _} = Account.unfollow_user(user2, user1.username)
+      assert {:ok, %{following: false}} = Account.unfollow_user(user1, user2.username)
+      assert {:ok, %{following: false}} = Account.unfollow_user(user2, user1.username)
     end
   end
 end

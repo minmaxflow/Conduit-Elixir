@@ -32,6 +32,9 @@ defmodule Conduit.Account do
     end
   end
 
+  def profile(current_user, followee_username) do
+  end
+
   def follow_user(follower, followee_username) do
     query = from u in User, where: u.username == ^followee_username
 
@@ -43,6 +46,9 @@ defmodule Conduit.Account do
         %UserFollower{}
         |> UserFollower.changeset(%{follower_id: follower.id, followee_id: followee.id})
         |> Repo.insert()
+
+        followee = %{followee | password_hash: nil, following: true}
+        {:ok, followee}
     end
   end
 
@@ -53,7 +59,9 @@ defmodule Conduit.Account do
          user_follow when not is_nil(user_follow) <-
            Repo.get_by(UserFollower, follower_id: follower.id, followee_id: followee.id) do
       Repo.delete(user_follow)
-      {:ok, user_follow}
+
+      followee = %{followee | password_hash: nil, following: false}
+      {:ok, followee}
     else
       _ -> {:error, :not_found}
     end
