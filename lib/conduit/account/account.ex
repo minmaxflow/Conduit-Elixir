@@ -32,7 +32,22 @@ defmodule Conduit.Account do
     end
   end
 
+  # 使用left_join来一步判定
   def profile(current_user, followee_username) do
+    uid =
+      case current_user do
+        nil -> -1
+        current_user -> current_user.id
+      end
+
+    query =
+      from u in User,
+        left_join: uf in UserFollower,
+        on: u.id == uf.followee_id and uf.follower_id == ^uid,
+        where: u.username == ^followee_username,
+        select: %{u | following: not is_nil(uf.follower_id)}
+
+    Repo.one(query)
   end
 
   def follow_user(follower, followee_username) do

@@ -76,5 +76,23 @@ defmodule Conduit.AccountTest do
       assert {:ok, %{following: false}} = Account.unfollow_user(user1, user2.username)
       assert {:ok, %{following: false}} = Account.unfollow_user(user2, user1.username)
     end
+
+    test "profile" do
+      user1 = %{email: "user1@test.com", username: "usr1", password: "user1pass"}
+      user2 = %{email: "user2@test.com", username: "usr2", password: "user2pass"}
+
+      assert {:ok, user1} = Account.create_user(user1)
+      assert {:ok, user2} = Account.create_user(user2)
+
+      # user1 follow user2 
+      assert {:ok, %{following: true}} = Account.follow_user(user1, user2.username)
+
+      # Account
+      assert %{following: true} = Account.profile(user1, user2.username)
+      assert %{following: false} = Account.profile(nil, user2.username)
+      assert %{following: false} = Account.profile(user1, user1.username)
+
+      refute Account.profile(nil, "null")
+    end
   end
 end
