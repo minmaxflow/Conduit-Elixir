@@ -3,6 +3,9 @@ defmodule ConduitWeb.ProfileController do
 
   alias Conduit.Account
 
+  # TODO，没加上这个也起作用了，没明白
+  action_fallback ConduitWeb.FallbackController
+
   def profile(conn, %{"username" => followee_username}) do
     user = Guardian.Plug.current_resource(conn)
 

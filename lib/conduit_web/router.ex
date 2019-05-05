@@ -32,5 +32,11 @@ defmodule ConduitWeb.Router do
 
     post "/profile/:username/follow", ProfileController, :follow
     delete "/profile/:username/follow", ProfileController, :unfollow
+
+    # article     
+    post "/articles", ArticleController, :create
+    get "/articles/:slug", ArticleController, :show
+    put "/articles/:slug", ArticleController, :update
+    delete "/articles/:slug", ArticleController, :delete
   end
 end

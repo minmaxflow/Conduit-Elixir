@@ -1,19 +1,29 @@
-Article Controller API 
-
 Test Controller API
 
-===
+==
+
 User Favorite   
+    migration
+    schema 
+    contenxt api 
+
     Favorite
     Unfavorite
 
+    修正Article的几个字段 // 需要SQL
+        是否fav
+        fav_count
 ===
 
-List
-    List article // Auth optional 
-    Feed Article 
+comment 
+
 ==
 
-2 comment 
-3 taglist 
+taglist 
+
+===
+List
+feeds
+
+
 
