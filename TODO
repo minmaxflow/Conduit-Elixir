@@ -1,4 +1,19 @@
-1 article 
+Article Controller API 
+
+Test Controller API
+
+===
+User Favorite   
+    Favorite
+    Unfavorite
+
+===
+
+List
+    List article // Auth optional 
+    Feed Article 
+==
+
 2 comment 
 3 taglist 
 

@@ -1,7 +1,7 @@
 # 部分代码参考 https://github.com/hashrocket/tilex/blob/f43c70e06258c011fe90b9779b8a295d97caedf4/web/models/post.ex
 
 defmodule Conduit.Blog.Article do
-  use Ecto.Schema
+  use Conduit.Schema
   import Ecto.Changeset
 
   alias Conduit.Account.User
@@ -23,15 +23,15 @@ defmodule Conduit.Blog.Article do
   def slugify_title(title) do
     title
     |> String.downcase()
-    |> String.replace(~r/[^A-Za-z0-9]/, "")
+    |> String.replace(~r/[^A-Za-z0-9\s-]/, "")
     |> String.replace(~r/(\s|-)+/, "-")
   end
 
   @doc false
   def changeset(article, attrs) do
     article
-    |> cast(attrs, [:title, :description, :body])
-    |> validate_required([:title, :description, :body])
+    |> cast(attrs, [:title, :description, :body, :author_id])
+    |> validate_required([:title, :body, :author_id])
     |> validate_length(:title, max: 50)
     |> validate_length(:description, max: 1000)
     |> add_slug
@@ -40,7 +40,7 @@ defmodule Conduit.Blog.Article do
   def generate_slug do
     :base64.encode(:crypto.strong_rand_bytes(16))
     |> String.replace(~r/[^A-Za-z0-9]/, "")
-    |> String.replace(0, 10)
+    |> String.slice(0, 10)
     |> String.downcase()
   end
 
