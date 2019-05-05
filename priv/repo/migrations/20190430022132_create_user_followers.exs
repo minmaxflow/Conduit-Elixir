@@ -9,6 +9,7 @@ defmodule Conduit.Repo.Migrations.CreateUserFollowers do
       timestamps()
     end
 
+    # 假设数据库会基于主键创建(follower_id, followee_id)的唯一索引
     create index(:user_followers, [:followee_id])
   end
 end
