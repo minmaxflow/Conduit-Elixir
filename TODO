@@ -1,14 +1,19 @@
-User Favorite   
-    migration
-    schema 
-    contenxt api 
-
+contenxt api 
     Favorite
     Unfavorite
 
     修正Article的几个字段
         是否fav
         fav_count
+
+    修正获取Author里面的following，是否正确
+
+test 
+
+rest api 
+
+test
+
 ===
 
 comment 

@@ -4,7 +4,7 @@ defmodule Conduit.Blog do
   alias Conduit.Repo
 
   alias Conduit.Account.{User, UserFollower}
-  alias Conduit.Blog.{Article}
+  alias Conduit.Blog.{Article, Favorite}
 
   # article CURD
 
@@ -57,4 +57,27 @@ defmodule Conduit.Blog do
   end
 
   # article favorite
+
+  def favorite(slug, user) do
+    with {:ok, article} <- get_article_by_slug(slug),
+         {:ok, favorite} <-
+           %Favorite{}
+           |> Favorite.changeset(%{user_id: user.id, article_id: article.id})
+           |> Repo.insert() do
+      get_article_by_slug(slug)
+    end
+  end
+
+  def un_favorite(slug, user) do
+    with {:ok, article} <- get_article_by_slug(slug) do
+      case Repo.get_by(Favorite, user_id: user.id, article_id: article.id) do
+        nil ->
+          {:error, :not_found}
+
+        favorite ->
+          Repo.delete(favorite)
+          get_article_by_slug(slug)
+      end
+    end
+  end
 end
