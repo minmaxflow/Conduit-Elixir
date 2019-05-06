@@ -98,6 +98,20 @@ defmodule ConduitWeb.ArticleControllerTest do
     end
   end
 
+  describe "article favorite" do
+    setup [:create_article]
+
+    test "fav/unfav", %{conn: conn, article: article} do
+      conn = post(conn, Routes.article_path(conn, :favorite, article.slug))
+
+      assert %{} = json_response(conn, 200)
+
+      conn = delete(conn, Routes.article_path(conn, :unfavorite, article.slug))
+
+      assert %{} = json_response(conn, 200)
+    end
+  end
+
   defp create_article(_) do
     article = fixture(:article)
     {:ok, article: article}
