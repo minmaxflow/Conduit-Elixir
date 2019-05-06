@@ -7,7 +7,7 @@ defmodule Conduit.Blog.ArticleTest do
   alias Conduit.Account.User
 
   alias Conduit.Blog
-  alias Conduit.Blog.Article
+  alias Conduit.Blog.{Article}
 
   @user_attr %{email: "test@test.com", username: "username", password: "password123"}
   @article_attr %{title: "title", description: "description", body: "article body"}
@@ -73,5 +73,62 @@ defmodule Conduit.Blog.ArticleTest do
     {:ok, article} = Blog.create_article(@article_attr, user)
 
     {article, article.slug <> "-" <> Article.slugify_title(article.title)}
+  end
+
+  describe "article favorited" do
+    test "fav/unfav" do
+      {:ok, user} = Account.create_user(@user_attr)
+
+      {:ok, user2} =
+        Account.create_user(%{
+          email: "test2@test.com",
+          username: "username2",
+          password: "password123"
+        })
+
+      {:ok, article} = Blog.create_article(@article_attr, user)
+
+      assert {:ok,
+              %{
+                favorited: false,
+                favorites_count: 0
+              }} = Blog.get_article_by_slug(article.slug, user)
+
+      assert {:ok,
+              %{
+                favorited: true,
+                favorites_count: 1
+              }} = Blog.favorite(article.slug, user)
+
+      assert {:ok,
+              %{
+                favorited: false,
+                favorites_count: 1
+              }} = Blog.get_article_by_slug(article.slug, nil)
+
+      assert {:ok,
+              %{
+                favorited: false,
+                favorites_count: 1
+              }} = Blog.get_article_by_slug(article.slug, user2)
+
+      assert {:ok,
+              %{
+                favorited: true,
+                favorites_count: 2
+              }} = Blog.favorite(article.slug, user2)
+
+      assert {:ok,
+              %{
+                favorited: false,
+                favorites_count: 1
+              }} = Blog.un_favorite(article.slug, user2)
+
+      assert {:ok,
+              %{
+                favorited: false,
+                favorites_count: 0
+              }} = Blog.un_favorite(article.slug, user)
+    end
   end
 end
