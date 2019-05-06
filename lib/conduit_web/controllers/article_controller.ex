@@ -25,7 +25,9 @@ defmodule ConduitWeb.ArticleController do
   end
 
   def update(conn, %{"slug" => slug, "article" => article_params}) do
-    with {:ok, %Article{} = article} <- Blog.update_article(slug, article_params) do
+    user = Guardian.Plug.current_resource(conn)
+
+    with {:ok, %Article{} = article} <- Blog.update_article(slug, article_params, user) do
       render(conn, "show.json", article: article)
     end
   end

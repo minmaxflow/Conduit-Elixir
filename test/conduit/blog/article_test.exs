@@ -58,13 +58,13 @@ defmodule Conduit.Blog.ArticleTest do
 
       # sucesses
       assert {:ok, %Article{title: "new title", author: %User{}}} =
-               Blog.update_article(titled_slug, %{title: "new title"})
+               Blog.update_article(titled_slug, %{title: "new title"}, nil)
 
       # error not found 
-      assert {:error, :not_found} = Blog.update_article("wrong slug title", %{})
+      assert {:error, :not_found} = Blog.update_article("wrong slug title", %{}, nil)
 
       # error changeset
-      assert {:error, %Changeset{}} = Blog.update_article(titled_slug, %{title: ""})
+      assert {:error, %Changeset{}} = Blog.update_article(titled_slug, %{title: ""}, nil)
     end
   end
 

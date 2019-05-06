@@ -17,7 +17,7 @@ defmodule Conduit.Blog do
     |> Article.changeset(attrs)
     |> Repo.insert()
     |> case do
-      {:ok, article} -> {:ok, Repo.preload(article, :author)}
+      {:ok, article} -> get_article_by_slug(article.slug, user)
       {:error, changeset} -> {:error, changeset}
     end
   end
@@ -63,7 +63,7 @@ defmodule Conduit.Blog do
     end
   end
 
-  def update_article(titled_slug, attrs) do
+  def update_article(titled_slug, attrs, user) do
     [slug | _] = String.split(titled_slug, "-")
 
     with article when not is_nil(article) <- Repo.get_by(Article, slug: slug) do
@@ -71,7 +71,7 @@ defmodule Conduit.Blog do
       |> Article.changeset(attrs)
       |> Repo.update()
       |> case do
-        {:ok, article} -> {:ok, Repo.preload(article, :author)}
+        {:ok, article} -> get_article_by_slug(article.slug, user)
         {:error, changeset} -> {:error, changeset}
       end
     else
