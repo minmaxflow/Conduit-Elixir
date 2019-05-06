@@ -1,8 +1,3 @@
-test 
-    article > author - following 
-
-rest api 
-
 test
 
 ===
@@ -11,8 +6,7 @@ comment
 
 ==
 
-taglist 
-    这个使用定制的preload来做比较合适？？
+taglist    
 
 ===
 List

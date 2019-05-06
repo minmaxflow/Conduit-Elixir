@@ -2,7 +2,6 @@ defmodule ConduitWeb.ArticleControllerTest do
   use ConduitWeb.ConnCase
 
   alias Conduit.Blog
-  alias Conduit.Blog.Article
 
   alias Conduit.Account
   alias Conduit.Account.User

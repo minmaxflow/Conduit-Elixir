@@ -37,4 +37,20 @@ defmodule ConduitWeb.ArticleController do
       render(conn, "delete.json", article: article)
     end
   end
+
+  def favorite(conn, %{"slug" => slug}) do
+    user = Guardian.Plug.current_resource(conn)
+
+    with {:ok, article} <- Blog.favorite(slug, user) do
+      render(conn, "show.json", article: article)
+    end
+  end
+
+  def unfavorite(conn, %{"slug" => slug}) do
+    user = Guardian.Plug.current_resource(conn)
+
+    with {:ok, article} <- Blog.un_favorite(slug, user) do
+      render(conn, "show.json", article: article)
+    end
+  end
 end

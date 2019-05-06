@@ -40,5 +40,8 @@ defmodule ConduitWeb.Router do
     post "/articles", ArticleController, :create
     put "/articles/:slug", ArticleController, :update
     delete "/articles/:slug", ArticleController, :delete
+
+    post "/articles/:slug/favorite", ArticleController, :favorite
+    delete "/articles/:slug/favorite", ArticleController, :unfavorite
   end
 end
