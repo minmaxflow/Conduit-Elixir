@@ -1,6 +1,5 @@
-看怎么获取author以及判定是否following。
-    现在是通过preload，但是没有判定following
-    最好是通过join来判定
+test 
+    article > author - following 
 
 rest api 
 

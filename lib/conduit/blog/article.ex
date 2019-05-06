@@ -17,6 +17,8 @@ defmodule Conduit.Blog.Article do
     field :favorited, :boolean, virtual: true, default: false
     field :favorites_count, :integer, virtual: true, default: 0
 
+    field :following, :boolean, virtual: true, default: false
+
     timestamps()
   end
 

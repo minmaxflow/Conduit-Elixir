@@ -39,18 +39,28 @@ defmodule Conduit.Blog do
       from a in Article,
         left_join: f in Favorite,
         on: a.id == f.article_id,
+        join: u in User,
+        on: a.author_id == u.id,
+        left_join: uf in UserFollower,
+        on: uf.follower_id == ^uid and uf.followee_id == u.id,
         where: a.slug == ^slug,
-        group_by: a.id,
+        # 需要group多个字段，在下面计算following需要这样操作，否则SQL会报错
+        group_by: [a.id, u.id, uf.follower_id],
         select: %{
           a
           | favorites_count: count(f.user_id),
             favorited:
-              fragment("max(case ? when ? then 1 else 0 end  ) = 1", f.user_id, ^uid) != 0
-        }
+              fragment("max(case ? when ? then 1 else 0 end  ) = 1", f.user_id, ^uid) != 0,
+            # 受限于preload的限制， 在通过join preload的时候，User对象的following不能一步计算完成
+            # 需要先映射到Article的这个字段，然后再复制到User对象
+            following: not is_nil(uf.follower_id)
+        },
+        # 最好ecto里面的preload能提供select一样的定制性，但是现在没有
+        preload: [author: u]
 
     case Repo.one(query) do
       nil -> {:error, :not_found}
-      article -> {:ok, Repo.preload(article, :author)}
+      article -> {:ok, %{article | author: %{article.author | following: article.following}}}
     end
   end
 
@@ -83,7 +93,7 @@ defmodule Conduit.Blog do
 
   def favorite(slug, user) do
     with {:ok, article} <- get_article_by_slug(slug, user),
-         {:ok, favorite} <-
+         {:ok, _} <-
            %Favorite{}
            |> Favorite.changeset(%{user_id: user.id, article_id: article.id})
            |> Repo.insert() do

@@ -68,13 +68,6 @@ defmodule Conduit.Blog.ArticleTest do
     end
   end
 
-  defp prepare_data() do
-    {:ok, user} = Account.create_user(@user_attr)
-    {:ok, article} = Blog.create_article(@article_attr, user)
-
-    {article, article.slug <> "-" <> Article.slugify_title(article.title)}
-  end
-
   describe "article favorited" do
     test "fav/unfav" do
       {:ok, user} = Account.create_user(@user_attr)
@@ -130,5 +123,32 @@ defmodule Conduit.Blog.ArticleTest do
                 favorites_count: 0
               }} = Blog.un_favorite(article.slug, user)
     end
+  end
+
+  describe "article -> user" do
+    test "follow/unfollowing" do
+      {:ok, user} = Account.create_user(@user_attr)
+
+      {:ok, user2} =
+        Account.create_user(%{
+          email: "test2@test.com",
+          username: "username2",
+          password: "password123"
+        })
+
+      {:ok, article} = Blog.create_article(@article_attr, user)
+
+      assert {:ok, %{author: %{following: false}}} = Blog.get_article_by_slug(article.slug, user2)
+
+      Account.follow_user(user2, user.username)
+      assert {:ok, %{author: %{following: true}}} = Blog.get_article_by_slug(article.slug, user2)
+    end
+  end
+
+  defp prepare_data() do
+    {:ok, user} = Account.create_user(@user_attr)
+    {:ok, article} = Blog.create_article(@article_attr, user)
+
+    {article, article.slug <> "-" <> Article.slugify_title(article.title)}
   end
 end
