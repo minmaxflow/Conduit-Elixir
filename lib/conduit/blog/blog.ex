@@ -25,7 +25,30 @@ defmodule Conduit.Blog do
   def get_article_by_slug(titled_slug, user) do
     [slug | _] = String.split(titled_slug, "-")
 
-    case Repo.get_by(Article, slug: slug) do
+    uid =
+      case user do
+        nil -> -1
+        user -> user.id
+      end
+
+    # 参考 
+    # https://stackoverflow.com/questions/33784786/how-to-check-if-value-exists-in-each-group-after-group-by
+    # https://dev.mysql.com/doc/refman/5.7/en/group-by-functional-dependence.html
+    # https://gabi.dev/2016/03/03/group-by-are-you-sure-you-know-it/
+    query =
+      from a in Article,
+        left_join: f in Favorite,
+        on: a.id == f.article_id,
+        where: a.slug == ^slug,
+        group_by: a.id,
+        select: %{
+          a
+          | favorites_count: count(f.user_id),
+            favorited:
+              fragment("max(case ? when ? then 1 else 0 end  ) = 1", f.user_id, ^uid) != 0
+        }
+
+    case Repo.one(query) do
       nil -> {:error, :not_found}
       article -> {:ok, Repo.preload(article, :author)}
     end

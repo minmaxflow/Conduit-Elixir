@@ -31,7 +31,9 @@ defmodule ConduitWeb.ArticleView do
       body: article.body,
       createdAt: DateTime.to_iso8601(article.created_at),
       updatedAt: DateTime.to_iso8601(article.updated_at),
-      author: render_one(article.author, ProfileView, "profile.json")
+      author: render_one(article.author, ProfileView, "profile.json"),
+      favorited: article.favorited,
+      favorites_count: article.favorites_count
     }
   end
 end
