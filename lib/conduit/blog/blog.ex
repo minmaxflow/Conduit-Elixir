@@ -4,16 +4,12 @@ defmodule Conduit.Blog do
   alias Conduit.Repo
 
   alias Conduit.Account.{User, UserFollower}
-  alias Conduit.Blog.{Article, Favorite}
+  alias Conduit.Blog.{Article, Favorite, Comment}
 
   # article CURD
 
   def create_article(attrs, user) do
-    attrs = Map.put(attrs, :author_id, user.id)
-
-    attrs = for {k, v} <- attrs, do: {to_string(k), v}, into: %{}
-
-    %Article{}
+    %Article{author_id: user.id}
     |> Article.changeset(attrs)
     |> Repo.insert()
     |> case do
@@ -112,5 +108,62 @@ defmodule Conduit.Blog do
           get_article_by_slug(slug, user)
       end
     end
+  end
+
+  # comments
+
+  # add comment 
+  def create_comment(titled_slug, attrs, user) do
+    [slug | _] = String.split(titled_slug, "-")
+
+    case Repo.get_by(Article, slug: slug) do
+      nil ->
+        {:error, :not_found}
+
+      article ->
+        %Comment{author_id: user.id, article_id: article.id}
+        |> Comment.changeset(attrs)
+        |> Repo.insert()
+    end
+  end
+
+  # delete comment 
+  def delete_comment(slug, comment_id, user) do
+    [slug | _] = String.split(titled_slug, "-")
+
+    case Repo.get_by(Article, slug: slug) do
+      nil ->
+        {:error, :not_found}
+
+      article ->
+        query =
+          from c in Comment,
+               where(c.article_id == ^article.id and c.author_id == ^user.id)
+
+        case Repo.one(query) do
+          nil ->
+            {:error, :not_found}
+
+          comment ->
+            Repo.delete(comment)
+            {:ok, comment}
+        end
+    end
+  end
+
+  # list comment for slug
+  def list_comment(slug) do
+    [slug | _] = String.split(titled_slug, "-")
+
+    query =
+      from c in Comment,
+        join: a in Article,
+        on: c.article_id == a.id,
+        join: u in User,
+        on: c.author_id == u.id,
+        where: a.slug == ^slug,
+        preload: [author: u]
+
+    Repo.all(query)
   end
 end

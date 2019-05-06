@@ -2,7 +2,7 @@ defmodule Conduit.Account.User do
   use Conduit.Schema
   import Ecto.Changeset
 
-  alias Conduit.Blog.Article
+  alias Conduit.Blog.{Article, Comment}
 
   schema "users" do
     field :bio, :string
@@ -12,6 +12,7 @@ defmodule Conduit.Account.User do
     field :username, :string
 
     has_many :articles, Article, foreign_key: :author_id
+    has_many :comments, Comment, foreign_key: :author_id
 
     field :password, :string, virtual: true
     field :token, :string, virtual: true
