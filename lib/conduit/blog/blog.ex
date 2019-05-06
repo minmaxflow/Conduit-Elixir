@@ -11,6 +11,8 @@ defmodule Conduit.Blog do
   def create_article(attrs, user) do
     attrs = Map.put(attrs, :author_id, user.id)
 
+    attrs = for {k, v} <- attrs, do: {to_string(k), v}, into: %{}
+
     %Article{}
     |> Article.changeset(attrs)
     |> Repo.insert()
@@ -23,8 +25,10 @@ defmodule Conduit.Blog do
   def get_article_by_slug(titled_slug) do
     [slug | _] = String.split(titled_slug, "-")
 
-    Repo.get_by(Article, slug: slug)
-    |> Repo.preload(:author)
+    case Repo.get_by(Article, slug: slug) do
+      nil -> {:error, :not_found}
+      article -> {:ok, Repo.preload(article, :author)}
+    end
   end
 
   def delete_article_by_slug(titled_slug) do

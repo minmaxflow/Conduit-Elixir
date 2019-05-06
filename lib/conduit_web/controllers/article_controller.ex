@@ -17,8 +17,9 @@ defmodule ConduitWeb.ArticleController do
   end
 
   def show(conn, %{"slug" => slug}) do
-    article = Blog.get_article_by_slug(slug)
-    render(conn, "show.json", article: article)
+    with {:ok, article} <- Blog.get_article_by_slug(slug) do
+      render(conn, "show.json", article: article)
+    end
   end
 
   def update(conn, %{"slug" => slug, "article" => article_params}) do
@@ -29,7 +30,7 @@ defmodule ConduitWeb.ArticleController do
 
   def delete(conn, %{"slug" => slug}) do
     with {:ok, %Article{} = article} <- Blog.delete_article_by_slug(slug) do
-      render(conn, "show.json", article: article)
+      render(conn, "delete.json", article: article)
     end
   end
 end

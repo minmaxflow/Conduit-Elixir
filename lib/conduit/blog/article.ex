@@ -32,7 +32,7 @@ defmodule Conduit.Blog.Article do
     article
     |> cast(attrs, [:title, :description, :body, :author_id])
     |> validate_required([:title, :body, :author_id])
-    |> validate_length(:title, max: 50)
+    |> validate_length(:title, max: 50, min: 3)
     |> validate_length(:description, max: 1000)
     |> add_slug
   end
