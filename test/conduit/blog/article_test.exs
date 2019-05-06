@@ -42,8 +42,8 @@ defmodule Conduit.Blog.ArticleTest do
     test "get by slug" do
       {_, titled_slug} = prepare_data()
 
-      assert {:ok, %Article{author: %User{}}} = Blog.get_article_by_slug(titled_slug)
-      assert {:error, :not_found} = Blog.get_article_by_slug("wrong slug title")
+      assert {:ok, %Article{author: %User{}}} = Blog.get_article_by_slug(titled_slug, nil)
+      assert {:error, :not_found} = Blog.get_article_by_slug("wrong slug title", nil)
     end
 
     test "delete by slug" do

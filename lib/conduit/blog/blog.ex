@@ -22,7 +22,7 @@ defmodule Conduit.Blog do
     end
   end
 
-  def get_article_by_slug(titled_slug) do
+  def get_article_by_slug(titled_slug, user) do
     [slug | _] = String.split(titled_slug, "-")
 
     case Repo.get_by(Article, slug: slug) do
@@ -59,24 +59,24 @@ defmodule Conduit.Blog do
   # article favorite
 
   def favorite(slug, user) do
-    with {:ok, article} <- get_article_by_slug(slug),
+    with {:ok, article} <- get_article_by_slug(slug, user),
          {:ok, favorite} <-
            %Favorite{}
            |> Favorite.changeset(%{user_id: user.id, article_id: article.id})
            |> Repo.insert() do
-      get_article_by_slug(slug)
+      get_article_by_slug(slug, user)
     end
   end
 
   def un_favorite(slug, user) do
-    with {:ok, article} <- get_article_by_slug(slug) do
+    with {:ok, article} <- get_article_by_slug(slug, user) do
       case Repo.get_by(Favorite, user_id: user.id, article_id: article.id) do
         nil ->
           {:error, :not_found}
 
         favorite ->
           Repo.delete(favorite)
-          get_article_by_slug(slug)
+          get_article_by_slug(slug, user)
       end
     end
   end

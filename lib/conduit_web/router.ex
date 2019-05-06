@@ -22,6 +22,9 @@ defmodule ConduitWeb.Router do
 
     # profile
     get "/profiles/:username", ProfileController, :profile
+
+    # article
+    get "/articles/:slug", ArticleController, :show
   end
 
   scope "/api", ConduitWeb do
@@ -35,7 +38,6 @@ defmodule ConduitWeb.Router do
 
     # article     
     post "/articles", ArticleController, :create
-    get "/articles/:slug", ArticleController, :show
     put "/articles/:slug", ArticleController, :update
     delete "/articles/:slug", ArticleController, :delete
   end
