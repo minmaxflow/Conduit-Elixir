@@ -150,6 +150,7 @@ defmodule Conduit.Blog do
 
           comment ->
             Repo.delete(comment)
+            comment = %{comment | author: nil}
             {:ok, comment}
         end
     end
