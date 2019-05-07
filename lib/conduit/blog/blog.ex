@@ -9,12 +9,18 @@ defmodule Conduit.Blog do
   # article CURD
 
   def create_article(attrs, user) do
-    %Article{author_id: user.id}
-    |> Article.changeset(attrs)
-    |> Repo.insert()
-    |> case do
-      {:ok, article} -> get_article_by_slug(article.slug, user)
-      {:error, changeset} -> {:error, changeset}
+    # need better way??
+    tag_list = attrs["tagList"] || attrs[:tagList] || []
+
+    with {:ok, tags} <- create_taglist(tag_list) do
+      %Article{author_id: user.id}
+      |> Article.changeset(attrs)
+      |> Ecto.Changeset.put_assoc(:tags, tags)
+      |> Repo.insert()
+      |> case do
+        {:ok, article} -> get_article_by_slug(article.slug, user)
+        {:error, changeset} -> {:error, changeset}
+      end
     end
   end
 
@@ -52,7 +58,7 @@ defmodule Conduit.Blog do
             following: not is_nil(uf.follower_id)
         },
         # 最好ecto里面的preload能提供select一样的定制性，但是现在没有
-        preload: [author: u]
+        preload: [:tags, author: u]
 
     case Repo.one(query) do
       nil -> {:error, :not_found}
@@ -72,9 +78,14 @@ defmodule Conduit.Blog do
   def update_article(titled_slug, attrs, user) do
     [slug | _] = String.split(titled_slug, "-")
 
-    with article when not is_nil(article) <- Repo.get_by(Article, slug: slug) do
+    tag_list = attrs["tagList"] || attrs[:tagList] || []
+
+    with {:ok, tags} <- create_taglist(tag_list),
+         article when not is_nil(article) <- Repo.get_by(Article, slug: slug) do
       article
+      |> Repo.preload([:tags])
       |> Article.changeset(attrs)
+      |> Ecto.Changeset.put_assoc(:tags, tags)
       |> Repo.update()
       |> case do
         {:ok, article} -> get_article_by_slug(article.slug, user)
@@ -84,6 +95,8 @@ defmodule Conduit.Blog do
       nil -> {:error, :not_found}
     end
   end
+
+  # article list/feeds 
 
   # article favorite
 
@@ -190,27 +203,31 @@ defmodule Conduit.Blog do
   end
 
   def create_taglist(tag_list) do
-    Repo.transaction(fn ->
-      results =
-        Enum.map(tag_list, fn tag ->
-          create_tag(tag)
-        end)
+    if Enum.empty?(tag_list) do
+      {:ok, []}
+    else
+      Repo.transaction(fn ->
+        results =
+          Enum.map(tag_list, fn tag ->
+            create_tag(tag)
+          end)
 
-      results =
-        Enum.reduce(results, fn
-          {_, _}, {:error, changeset} -> {:error, changeset}
-          {:error, changeset}, {_, _} -> {:error, changeset}
-          {:ok, tag}, {:ok, tags} -> {:ok, [tag | List.wrap(tags)]}
-        end)
+        results =
+          Enum.reduce(results, fn
+            {_, _}, {:error, changeset} -> {:error, changeset}
+            {:error, changeset}, {_, _} -> {:error, changeset}
+            {:ok, tag}, {:ok, tags} -> {:ok, [tag | List.wrap(tags)]}
+          end)
 
-      case results do
-        {:error, changeset} ->
-          Repo.rollback(changeset)
+        case results do
+          {:error, changeset} ->
+            Repo.rollback(changeset)
 
-        {:ok, tags} ->
-          Enum.reverse(tags)
-      end
-    end)
+          {:ok, tags} ->
+            Enum.reverse(tags)
+        end
+      end)
+    end
   end
 
   def create_tag(tag) do
