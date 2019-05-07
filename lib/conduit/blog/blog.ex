@@ -128,7 +128,7 @@ defmodule Conduit.Blog do
   end
 
   # delete comment 
-  def delete_comment(slug, comment_id, user) do
+  def delete_comment(titled_slug, comment_id, user) do
     [slug | _] = String.split(titled_slug, "-")
 
     case Repo.get_by(Article, slug: slug) do
@@ -138,7 +138,7 @@ defmodule Conduit.Blog do
       article ->
         query =
           from c in Comment,
-               where(c.article_id == ^article.id and c.author_id == ^user.id)
+            where: c.article_id == ^article.id and c.author_id == ^user.id and c.id == ^comment_id
 
         case Repo.one(query) do
           nil ->
@@ -152,8 +152,14 @@ defmodule Conduit.Blog do
   end
 
   # list comment for slug
-  def list_comment(slug) do
+  def list_comment(titled_slug, user) do
     [slug | _] = String.split(titled_slug, "-")
+
+    uid =
+      case user do
+        nil -> -1
+        user -> user.id
+      end
 
     query =
       from c in Comment,
@@ -161,9 +167,15 @@ defmodule Conduit.Blog do
         on: c.article_id == a.id,
         join: u in User,
         on: c.author_id == u.id,
+        left_join: uf in UserFollower,
+        on: uf.follower_id == ^uid and uf.followee_id == u.id,
         where: a.slug == ^slug,
+        select: %{c | following: not is_nil(uf.follower_id)},
         preload: [author: u]
 
     Repo.all(query)
+    |> Enum.map(fn comment ->
+      %{comment | author: %{comment.author | following: comment.following}}
+    end)
   end
 end

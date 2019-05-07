@@ -11,6 +11,8 @@ defmodule Conduit.Blog.Comment do
     belongs_to :author, User, foreign_key: :author_id
     belongs_to :article, Article, foreign_key: :article_id
 
+    field :following, :boolean, virtual: true, default: false
+
     timestamps()
   end
 
