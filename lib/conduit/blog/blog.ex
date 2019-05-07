@@ -39,10 +39,13 @@ defmodule Conduit.Blog do
     # https://gabi.dev/2016/03/03/group-by-are-you-sure-you-know-it/
     query =
       from a in Article,
+        # 计算favorites_count 以及 favorited
         left_join: f in Favorite,
         on: a.id == f.article_id,
+        # 获取author
         join: u in User,
         on: a.author_id == u.id,
+        # 判断是否following这个作者
         left_join: uf in UserFollower,
         on: uf.follower_id == ^uid and uf.followee_id == u.id,
         where: a.slug == ^slug,
@@ -58,6 +61,7 @@ defmodule Conduit.Blog do
             following: not is_nil(uf.follower_id)
         },
         # 最好ecto里面的preload能提供select一样的定制性，但是现在没有
+        # tags 不能通过join来preload，需要额外的一条SQL
         preload: [:tags, author: u]
 
     case Repo.one(query) do
@@ -97,11 +101,11 @@ defmodule Conduit.Blog do
   end
 
   # article list
-  def list_articles() do
+  def list_articles(_params) do
   end
 
   # feeds 
-  def list_articles_feed() do
+  def list_articles_feed(_params) do
   end
 
   # article favorite

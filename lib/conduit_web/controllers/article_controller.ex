@@ -39,12 +39,12 @@ defmodule ConduitWeb.ArticleController do
   end
 
   def index(conn, params) do
-    articles = Blog.list_articles()
+    articles = Blog.list_articles(params)
     render(conn, "index.json", articles: articles)
   end
 
   def feed(conn, params) do
-    articles = Blog.list_articles_feed()
+    articles = Blog.list_articles_feed(params)
     render(conn, "index.json", articles: articles)
   end
 
