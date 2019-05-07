@@ -1,6 +1,8 @@
-taglist    
-    and related to article 
-    
+related tags to article 
+    create 
+    update 
+    delete // 有级联删除来确保
+
 ===
 List
 feeds

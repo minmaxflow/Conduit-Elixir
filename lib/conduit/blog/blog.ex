@@ -4,7 +4,7 @@ defmodule Conduit.Blog do
   alias Conduit.Repo
 
   alias Conduit.Account.{User, UserFollower}
-  alias Conduit.Blog.{Article, Favorite, Comment}
+  alias Conduit.Blog.{Article, Favorite, Comment, Tag}
 
   # article CURD
 
@@ -182,5 +182,45 @@ defmodule Conduit.Blog do
     |> Enum.map(fn comment ->
       %{comment | author: %{comment.author | following: comment.following}}
     end)
+  end
+
+  # tags 
+  def list_tags() do
+    Repo.all(from t in Tag, order_by: [asc: t.id])
+  end
+
+  def create_taglist(tag_list) do
+    Repo.transaction(fn ->
+      results =
+        Enum.map(tag_list, fn tag ->
+          create_tag(tag)
+        end)
+
+      results =
+        Enum.reduce(results, fn
+          {_, _}, {:error, changeset} -> {:error, changeset}
+          {:error, changeset}, {_, _} -> {:error, changeset}
+          {:ok, tag}, {:ok, tags} -> {:ok, [tag | List.wrap(tags)]}
+        end)
+
+      case results do
+        {:error, changeset} ->
+          Repo.rollback(changeset)
+
+        {:ok, tags} ->
+          Enum.reverse(tags)
+      end
+    end)
+  end
+
+  def create_tag(tag) do
+    %Tag{}
+    |> Tag.changeset(%{name: tag})
+    |> Repo.insert(on_conflict: :replace_all_except_primary_key)
+    # mysql在conflict的情况下并没有返回id
+    |> case do
+      {:ok, %{id: nil}} -> {:ok, Repo.get_by(Tag, name: tag)}
+      {:ok, tag} -> {:ok, tag}
+    end
   end
 end

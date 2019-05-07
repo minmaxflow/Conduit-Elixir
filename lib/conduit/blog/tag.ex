@@ -11,6 +11,7 @@ defmodule Conduit.Blog.Tag do
     tag
     |> cast(attrs, [:name])
     |> validate_required([:name])
+    |> validate_length(:name, min: 2)
     |> unique_constraint(:name)
   end
 end

@@ -9,7 +9,7 @@ defmodule Conduit.Repo.Migrations.CreateTags do
     create unique_index(:tags, [:name])
 
     create table(:articles_tags, primary_key: false) do
-      add :article_id, references(:articles), primary_key: true
+      add :article_id, references(:articles, on_delete: :delete_all), primary_key: true
       add :tag_id, references(:tags), primary_key: true
     end
 
