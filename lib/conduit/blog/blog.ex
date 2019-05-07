@@ -124,6 +124,10 @@ defmodule Conduit.Blog do
         %Comment{author_id: user.id, article_id: article.id}
         |> Comment.changeset(attrs)
         |> Repo.insert()
+        |> case do
+          {:error, changeset} -> {:error, changeset}
+          {:ok, comment} -> {:ok, Repo.preload(comment, [:author])}
+        end
     end
   end
 
