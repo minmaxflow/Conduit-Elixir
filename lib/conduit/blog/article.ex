@@ -5,7 +5,7 @@ defmodule Conduit.Blog.Article do
   import Ecto.Changeset
 
   alias Conduit.Account.User
-  alias Conduit.Blog.Comment
+  alias Conduit.Blog.{Comment, Tag}
 
   schema "articles" do
     field :body, :string
@@ -15,6 +15,7 @@ defmodule Conduit.Blog.Article do
 
     belongs_to :author, User, foreign_key: :author_id
     has_many :comments, Comment, foreign_key: :article_id
+    many_to_many :tags, Tag, join_through: "articles_tags", on_replace: :delete
 
     field :favorited, :boolean, virtual: true, default: false
     field :favorites_count, :integer, virtual: true, default: 0
