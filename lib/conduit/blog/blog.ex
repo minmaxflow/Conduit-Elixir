@@ -96,7 +96,13 @@ defmodule Conduit.Blog do
     end
   end
 
-  # article list/feeds 
+  # article list
+  def list_articles() do
+  end
+
+  # feeds 
+  def list_articles_feed() do
+  end
 
   # article favorite
 

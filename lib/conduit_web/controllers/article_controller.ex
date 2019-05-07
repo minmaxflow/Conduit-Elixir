@@ -38,6 +38,16 @@ defmodule ConduitWeb.ArticleController do
     end
   end
 
+  def index(conn, params) do
+    articles = Blog.list_articles()
+    render(conn, "index.json", articles: articles)
+  end
+
+  def feed(conn, params) do
+    articles = Blog.list_articles_feed()
+    render(conn, "index.json", articles: articles)
+  end
+
   def favorite(conn, %{"slug" => slug}) do
     user = Guardian.Plug.current_resource(conn)
 

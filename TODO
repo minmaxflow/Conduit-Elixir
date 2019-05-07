@@ -1,9 +1,3 @@
-
-===
-List
-feeds
-
-==
 todo
 
 1 controller 的fallback利用起来，with语句，简化和统一controller的写法

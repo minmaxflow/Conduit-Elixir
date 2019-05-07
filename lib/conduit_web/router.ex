@@ -25,9 +25,13 @@ defmodule ConduitWeb.Router do
 
     # article
     get "/articles/:slug", ArticleController, :show
+    get "/articles", ArticleController, :index
 
     # comment 
     get "/articles/:slug/comments", CommentController, :index
+
+    # tag 
+    get "/tags", TagController, :index
   end
 
   scope "/api", ConduitWeb do
@@ -43,6 +47,8 @@ defmodule ConduitWeb.Router do
     post "/articles", ArticleController, :create
     put "/articles/:slug", ArticleController, :update
     delete "/articles/:slug", ArticleController, :delete
+
+    get "/articles/feed", ArticleController, :feed
 
     post "/articles/:slug/favorite", ArticleController, :favorite
     delete "/articles/:slug/favorite", ArticleController, :unfavorite
