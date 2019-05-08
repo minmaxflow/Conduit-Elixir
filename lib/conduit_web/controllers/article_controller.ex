@@ -39,12 +39,14 @@ defmodule ConduitWeb.ArticleController do
   end
 
   def index(conn, params) do
-    articles = Blog.list_articles(params)
+    user = Guardian.Plug.current_resource(conn)
+    articles = Blog.list_articles(params, user)
     render(conn, "index.json", articles: articles)
   end
 
   def feed(conn, params) do
-    articles = Blog.list_articles_feed(params)
+    user = Guardian.Plug.current_resource(conn)
+    articles = Blog.list_articles_feed(params, user)
     render(conn, "index.json", articles: articles)
   end
 
