@@ -84,6 +84,132 @@ defmodule Conduit.Blog.ArticleTest do
     end
   end
 
+  test "article list/feed" do
+    # prepare data
+    {:ok, user} =
+      Account.create_user(%{email: "test@test.com", username: "username", password: "password123"})
+
+    {:ok, user2} =
+      Account.create_user(%{
+        email: "test2@test.com",
+        username: "username2",
+        password: "password123"
+      })
+
+    {:ok, article} =
+      Blog.create_article(
+        %{
+          title: "title",
+          description: "description",
+          body: "article body",
+          tagList: ["tag1", "tag2"]
+        },
+        user
+      )
+
+    {:ok, article2} =
+      Blog.create_article(
+        %{
+          title: "title2",
+          description: "description2",
+          body: "article body2",
+          tagList: ["tag2", "tag3"]
+        },
+        user2
+      )
+
+    # test Tag 
+    assert [
+             %{
+               body: "article body2",
+               author: %{
+                 username: "username2",
+                 following: false
+               },
+               tags: [%{name: "tag2"}, %{name: "tag3"}]
+             }
+           ] = Blog.list_articles(%{"tag" => "tag3"}, nil)
+
+    assert [
+             %{
+               body: "article body2",
+               author: %{
+                 username: "username2",
+                 following: false
+               },
+               tags: [%{name: "tag2"}, %{name: "tag3"}]
+             },
+             %{
+               body: "article body",
+               author: %{
+                 username: "username",
+                 following: false
+               },
+               tags: [%{name: "tag1"}, %{name: "tag2"}]
+             }
+           ] = Blog.list_articles(%{"tag" => "tag2"}, nil)
+
+    # author
+    assert [
+             %{
+               body: "article body2",
+               author: %{
+                 username: "username2",
+                 following: false
+               },
+               tags: [%{name: "tag2"}, %{name: "tag3"}]
+             }
+           ] = Blog.list_articles(%{"author" => "username2"}, nil)
+
+    # favorited
+
+    assert [] = Blog.list_articles(%{"favorited" => "username2"}, nil)
+
+    Blog.favorite(article.slug, user2)
+
+    assert [
+             %{
+               body: "article body",
+               favorited: false,
+               favorites_count: 1,
+               author: %{
+                 username: "username",
+                 following: false
+               },
+               tags: [%{name: "tag1"}, %{name: "tag2"}]
+             }
+           ] = Blog.list_articles(%{"favorited" => "username2"}, nil)
+
+    assert [
+             %{
+               body: "article body",
+               favorited: true,
+               favorites_count: 1,
+               author: %{
+                 username: "username",
+                 following: false
+               },
+               tags: [%{name: "tag1"}, %{name: "tag2"}]
+             }
+           ] = Blog.list_articles(%{"favorited" => "username2"}, user2)
+
+    # feed
+    assert [] = Blog.list_articles_feed(nil, user)
+
+    Account.follow_user(user, user2.username)
+
+    assert [
+             %{
+               body: "article body2",
+               author: %{
+                 username: "username2",
+                 following: true
+               },
+               tags: [%{name: "tag2"}, %{name: "tag3"}]
+             }
+           ] = Blog.list_articles_feed(nil, user)
+  end
+
   describe "article favorited" do
     test "fav/unfav" do
       {:ok, user} = Account.create_user(@user_attr)

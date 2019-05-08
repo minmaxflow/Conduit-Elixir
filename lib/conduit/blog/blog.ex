@@ -104,6 +104,7 @@ defmodule Conduit.Blog do
 
   # list
   def list_articles(params, user) do
+    params = params || %{}
     offset = Map.get(params, "offset", 0)
     limit = Map.get(params, "limit", 20)
     tag = Map.get(params, "tag")
@@ -116,7 +117,7 @@ defmodule Conduit.Blog do
       from [a] in article_query,
         offset: ^offset,
         limit: ^limit,
-        order_by: [desc: a.updated_at]
+        order_by: [desc: a.updated_at, desc: a.created_at, desc: a.id]
 
     query =
       if tag do
@@ -145,6 +146,9 @@ defmodule Conduit.Blog do
         query
       end
 
+    # debug sql 
+    # Repo.to_sql(:all, query) |> IO.inspect()
+
     Repo.all(query)
     |> Enum.map(fn article ->
       %{article | author: %{article.author | following: article.following}}
@@ -153,6 +157,7 @@ defmodule Conduit.Blog do
 
   # feeds 
   def list_articles_feed(params, user) do
+    params = params || %{}
     offset = Map.get(params, "offset", 0)
     limit = Map.get(params, "limit", 20)
 
@@ -162,7 +167,7 @@ defmodule Conduit.Blog do
       from [a, _, _, uf] in article_query,
         offset: ^offset,
         limit: ^limit,
-        order_by: [desc: a.updated_at],
+        order_by: [desc: a.updated_at, desc: a.created_at, desc: a.id],
         where: not is_nil(uf.follower_id)
 
     Repo.all(query)
