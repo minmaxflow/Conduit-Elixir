@@ -25,7 +25,7 @@ defmodule ConduitWeb.CommentControllerTest do
        conn
        |> put_req_header("accept", "application/json")
        |> put_req_header("content-type", "application/json")
-       |> put_req_header("authorization", "Bearer " <> token)}
+       |> put_req_header("authorization", "Token " <> token)}
   end
 
   test "comment rest api", %{conn: conn, user: _user} do

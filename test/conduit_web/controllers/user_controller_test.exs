@@ -116,6 +116,6 @@ defmodule ConduitWeb.UserControllerTest do
     assert %{"user" => %{"token" => token}} = response
 
     conn
-    |> put_req_header("authorization", "Bearer " <> token)
+    |> put_req_header("authorization", "Token " <> token)
   end
 end

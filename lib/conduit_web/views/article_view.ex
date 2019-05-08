@@ -3,11 +3,12 @@ defmodule ConduitWeb.ArticleView do
 
   alias ConduitWeb.ArticleView
   alias ConduitWeb.ProfileView
+  alias ConduitWeb.TagView
 
   alias Conduit.Blog.Article
 
   def render("index.json", %{articles: articles}) do
-    %{article: render_many(articles, ArticleView, "article.json")}
+    %{articles: render_many(articles, ArticleView, "article.json")}
   end
 
   def render("show.json", %{article: article}) do
@@ -29,6 +30,7 @@ defmodule ConduitWeb.ArticleView do
       slug: article.slug <> "-" <> Article.slugify_title(article.title),
       description: article.description,
       body: article.body,
+      tagList: render_many(article.tags, TagView, "tag.json"),
       createdAt: DateTime.to_iso8601(article.created_at),
       updatedAt: DateTime.to_iso8601(article.updated_at),
       author: render_one(article.author, ProfileView, "profile.json"),

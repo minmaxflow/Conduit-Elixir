@@ -36,7 +36,7 @@ defmodule ConduitWeb.ArticleControllerTest do
        conn
        |> put_req_header("accept", "application/json")
        |> put_req_header("content-type", "application/json")
-       |> put_req_header("authorization", "Bearer " <> token)}
+       |> put_req_header("authorization", "Token " <> token)}
   end
 
   describe "create article" do

@@ -4,7 +4,7 @@ defmodule ConduitWeb.AuthPipeLine do
     module: ConduitWeb.Guardian,
     error_handler: ConduitWeb.AuthErrorHandler
 
-  plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+  plug Guardian.Plug.VerifyHeader, realm: "Token"
   plug Guardian.Plug.EnsureAuthenticated
   plug Guardian.Plug.LoadResource
 end
