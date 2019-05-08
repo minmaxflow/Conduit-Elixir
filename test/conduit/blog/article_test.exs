@@ -107,7 +107,7 @@ defmodule Conduit.Blog.ArticleTest do
         user
       )
 
-    {:ok, article2} =
+    {:ok, _} =
       Blog.create_article(
         %{
           title: "title2",

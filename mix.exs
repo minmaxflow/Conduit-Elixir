@@ -45,7 +45,10 @@ defmodule Conduit.MixProject do
       # auth
       {:comeonin, "~> 4.0.3"},
       {:bcrypt_elixir, "~> 1.0.4"},
-      {:guardian, "~> 1.0"}
+      {:guardian, "~> 1.0"},
+
+      # cors
+      {:cors_plug, "~> 2.0"}
     ]
   end
 

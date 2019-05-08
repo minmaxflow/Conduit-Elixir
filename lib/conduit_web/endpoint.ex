@@ -40,5 +40,7 @@ defmodule ConduitWeb.Endpoint do
     key: "_conduit_key",
     signing_salt: "Pm8SG84a"
 
+  plug CORSPlug
+
   plug ConduitWeb.Router
 end
